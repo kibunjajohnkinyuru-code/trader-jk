@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import WebSocket from "ws";
-
+import WebSocket, { RawData } from "ws";
 export async function GET() {
-  return new Promise<NextResponse>((resolve) => {
+return new Promise<NextResponse>((resolve) => {  
     const appId = process.env.DERIV_APP_ID || "1089";
 
     const ws = new WebSocket(
@@ -34,7 +33,7 @@ export async function GET() {
       );
     });
 
-    ws.on("message", (data) => {
+    ws.on("message", (data: RawData) => {
       clearTimeout(timeout);
 
       try {
@@ -87,7 +86,7 @@ export async function GET() {
       }
     });
 
-    ws.on("error", (error) => {
+    ws.on("error", (error: Error) => {
       clearTimeout(timeout);
 
       resolve(
