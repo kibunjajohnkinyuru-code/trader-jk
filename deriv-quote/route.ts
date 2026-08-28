@@ -28,8 +28,8 @@ export async function GET() {
     ws.on("open", () => {
       ws.send(
         JSON.stringify({
-          ticks: "R_100",
-          subscribe: 0,
+          ticks: "1HZ100V",
+          subscribe: 1,
         })
       );
     });
@@ -52,7 +52,12 @@ export async function GET() {
               { status: 502 }
             )
           );
-        } else if (msg.tick) {
+
+          ws.close();
+          return;
+        }
+
+        if (msg.tick) {
           resolve(
             NextResponse.json({
               ok: true,
@@ -64,16 +69,19 @@ export async function GET() {
               pip_size: msg.tick.pip_size,
             })
           );
-        } else {
-          resolve(
-            NextResponse.json({
-              ok: true,
-              feed: "NO_TICK",
-              appId,
-              msg_type: msg.msg_type ?? null,
-            })
-          );
+
+          ws.close();
+          return;
         }
+
+        resolve(
+          NextResponse.json({
+            ok: true,
+            feed: "NO_TICK",
+            appId,
+            msg_type: msg.msg_type ?? null,
+          })
+        );
 
         ws.close();
       } catch {
@@ -110,4 +118,4 @@ export async function GET() {
       );
     });
   });
-                                   }
+              }
