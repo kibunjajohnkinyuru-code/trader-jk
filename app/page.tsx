@@ -33,9 +33,9 @@ export default function Home() {
 
     const getQuote = async () => {
       try {
-        const response = await fetch("/api/deriv-quote", {
-          cache: "no-store",
-        });
+        const response = await fetch("/api/deriv-test/deriv-quote", {
+  cache: "no-store",
+});
 
         const data: QuoteData = await response.json();
 
