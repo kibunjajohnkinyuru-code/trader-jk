@@ -6,8 +6,8 @@ export async function GET() {
     const appId = process.env.DERIV_APP_ID || "1089";
 
     const ws = new WebSocket(
-      `wss://ws.derivws.com/websockets/v3?app_id=${appId}`
-    );
+  "wss://ws.binaryws.com/websockets/v3"
+);
 
     const timeout = setTimeout(() => {
       ws.close();
