@@ -16,7 +16,9 @@ export async function GET() {
         NextResponse.json(
           {
             ok: false,
-            error: "Deriv WebSocket timeout",
+            feed: "ERROR",
+            reason: "Deriv WebSocket timeout",
+            appId,
           },
           { status: 504 }
         )
@@ -36,33 +38,52 @@ export async function GET() {
       clearTimeout(timeout);
 
       try {
-        const message = JSON.parse(data.toString());
+        const msg = JSON.parse(data.toString());
+
+        if (msg.error) {
+          resolve(
+            NextResponse.json(
+              {
+                ok: false,
+                feed: "ERROR",
+                appId,
+                error: msg.error,
+              },
+              { status: 502 }
+            )
+          );
+        } else {
+          const symbols = msg.active_symbols || [];
+
+          resolve(
+            NextResponse.json({
+              ok: true,
+              feed: symbols.length > 0 ? "READY" : "EMPTY",
+              appId,
+              symbolCount: symbols.length,
+              sampleSymbols: symbols.slice(0, 10).map((s: any) => ({
+                symbol: s.symbol,
+                display_name: s.display_name,
+              })),
+            })
+          );
+        }
 
         ws.close();
-
-        resolve(
-          NextResponse.json({
-            ok: true,
-            received: true,
-            msg_type: message.msg_type ?? null,
-            error: message.error ?? null,
-            active_symbols_count: Array.isArray(message.active_symbols)
-              ? message.active_symbols.length
-              : 0,
-          })
-        );
       } catch {
-        ws.close();
-
         resolve(
           NextResponse.json(
             {
               ok: false,
-              error: "Invalid response from Deriv",
+              feed: "ERROR",
+              reason: "Invalid response from Deriv",
+              appId,
             },
             { status: 502 }
           )
         );
+
+        ws.close();
       }
     });
 
@@ -73,6 +94,9 @@ export async function GET() {
         NextResponse.json(
           {
             ok: false,
+            feed: "ERROR",
+            reason: "WebSocket connection failed",
+            appId,
             error: error.message,
           },
           { status: 502 }
@@ -80,4 +104,4 @@ export async function GET() {
       );
     });
   });
-          }
+              }
