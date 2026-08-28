@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import WebSocket from "ws";
 
 export async function GET() {
-  return new Promise((resolve) => {
+  return new Promise<NextResponse>((resolve) => {
     const appId = process.env.DERIV_APP_ID || "1089";
 
     const ws = new WebSocket(
