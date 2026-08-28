@@ -29,7 +29,7 @@ export async function GET() {
       ws.send(
         JSON.stringify({
           ticks: "R_100",
-          subscribe: 0,
+subscribe: 1,
         })
       );
     });
