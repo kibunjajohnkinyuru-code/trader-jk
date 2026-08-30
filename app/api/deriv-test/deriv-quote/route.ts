@@ -26,13 +26,13 @@ export async function GET() {
     }, 10000);
 
     ws.on("open", () => {
-      ws.send(
-        JSON.stringify({
-          ticks: "R_100",
-subscribe: 1,
-        })
-      );
-    });
+  ws.send(
+    JSON.stringify({
+      ticks: "1HZ100V",
+      subscribe: 1,
+    })
+  );
+});
 
     ws.on("message", (data: RawData) => {
       clearTimeout(timeout);
